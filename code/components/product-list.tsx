@@ -43,12 +43,12 @@ export function ProductList({ productos, onProductoClick, onCrearNuevo, isLoadin
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1">
           <h2 className="text-lg font-medium text-foreground mb-3">Todos los Productos</h2>
-          <Select value={categoriaSeleccionada || ""} onValueChange={(value) => onFiltroCategoria(value || null)}>
+          <Select value={categoriaSeleccionada || "all"} onValueChange={(value) => onFiltroCategoria(value === "all" ? null : value)}>
             <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="Filtrar por categoría..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas las categorías</SelectItem>
+              <SelectItem value="all">Todas las categorías</SelectItem>
               {Object.values(Categoria).map((categoria) => (
                 <SelectItem key={categoria} value={categoria}>
                   {categoria}
