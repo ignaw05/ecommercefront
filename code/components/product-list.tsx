@@ -3,16 +3,20 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { ProductoResponseDTO } from "@/types/producto"
+import { Categoria } from "@/types/producto"
 
 interface ProductListProps {
   productos: ProductoResponseDTO[]
   onProductoClick: (producto: ProductoResponseDTO) => void
   onCrearNuevo: () => void
   isLoading: boolean
+  categoriaSeleccionada: string | null
+  onFiltroCategoria: (categoria: string | null) => void
 }
 
-export function ProductList({ productos, onProductoClick, onCrearNuevo, isLoading }: ProductListProps) {
+export function ProductList({ productos, onProductoClick, onCrearNuevo, isLoading, categoriaSeleccionada, onFiltroCategoria }: ProductListProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -36,8 +40,23 @@ export function ProductList({ productos, onProductoClick, onCrearNuevo, isLoadin
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-medium text-foreground">Todos los Productos</h2>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1">
+          <h2 className="text-lg font-medium text-foreground mb-3">Todos los Productos</h2>
+          <Select value={categoriaSeleccionada || ""} onValueChange={(value) => onFiltroCategoria(value || null)}>
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue placeholder="Filtrar por categoría..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">Todas las categorías</SelectItem>
+              {Object.values(Categoria).map((categoria) => (
+                <SelectItem key={categoria} value={categoria}>
+                  {categoria}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <Button onClick={onCrearNuevo}>Agregar Producto</Button>
       </div>
       <div className="space-y-3">

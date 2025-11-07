@@ -5,6 +5,7 @@ import { ProductList } from "@/components/product-list"
 import { ProductDetail } from "@/components/product-detail"
 import { ProductCreate } from "@/components/product-create"
 import type { ProductoResponseDTO } from "@/types/producto"
+import { Categoria } from "@/types/producto"
 
 // Cambia esta URL por la ruta de tu API
 const API_BASE_URL = "https://apirest-gestionproductos.onrender.com"
@@ -14,11 +15,18 @@ export default function AdminPage() {
   const [productoSeleccionado, setProductoSeleccionado] = useState<ProductoResponseDTO | null>(null)
   const [modoCrear, setModoCrear] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string | null>(null)
 
-  const cargarProductos = async () => {
+  const cargarProductos = async (categoria?: string) => {
     try {
       setIsLoading(true)
-      const response = await fetch(`${API_BASE_URL}/api/productos`)
+      let url = `${API_BASE_URL}/api/productos`
+      
+      if (categoria) {
+        url = `${API_BASE_URL}/api/productos/categoria/${categoria}`
+      }
+      
+      const response = await fetch(url)
       if (!response.ok) throw new Error("Error al cargar productos")
       const data = await response.json()
       setProductos(data)
@@ -44,7 +52,7 @@ export default function AdminPage() {
   }
 
   const handleActualizado = () => {
-    cargarProductos()
+    cargarProductos(categoriaSeleccionada || undefined)
     setProductoSeleccionado(null)
     setModoCrear(false)
   }
@@ -52,6 +60,11 @@ export default function AdminPage() {
   const handleCrearNuevo = () => {
     setModoCrear(true)
     setProductoSeleccionado(null)
+  }
+
+  const handleFiltroCategoria = (categoria: string | null) => {
+    setCategoriaSeleccionada(categoria)
+    cargarProductos(categoria || undefined)
   }
 
   return (
@@ -78,6 +91,8 @@ export default function AdminPage() {
             onProductoClick={handleProductoClick}
             onCrearNuevo={handleCrearNuevo}
             isLoading={isLoading}
+            categoriaSeleccionada={categoriaSeleccionada}
+            onFiltroCategoria={handleFiltroCategoria}
           />
         )}
       </main>
